@@ -4,6 +4,7 @@
 
 module Test.Tasty.Patterns
   ( TestPattern
+  , parseExpr
   , parseTestPattern
   , noPattern
   , Path
@@ -34,15 +35,19 @@ instance IsOption TestPattern where
   optionHelp = return "Select only tests which satisfy a pattern or awk expression"
   optionCLParser = mkOptionCLParser (short 'p' <> metavar "PATTERN")
 
+parseExpr :: String -> Maybe Expr
+parseExpr s
+  | all (\c -> isAlphaNum c || c `elem` "_/ ") s =
+    Just $ ERE s
+  | otherwise =
+    case runParser expr s of
+      Success a -> Just a
+      _ -> Nothing
+
 parseTestPattern :: String -> Maybe TestPattern
 parseTestPattern s
   | null s = Just noPattern
-  | all (\c -> isAlphaNum c || c `elem` "_/ ") s =
-    Just . TestPattern . Just $ ERE s
-  | otherwise =
-    case runParser expr s of
-      Success a -> Just . TestPattern . Just $ a
-      _ -> Nothing
+  | otherwise = TestPattern . Just <$> parseExpr s
 
 exprMatches :: Expr -> Path -> Bool
 exprMatches e fields =

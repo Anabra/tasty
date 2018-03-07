@@ -175,6 +175,15 @@ data TestTree
 testGroup :: TestName -> [TestTree] -> TestTree
 testGroup = TestGroup
 
+after_ :: Expr -> TestTree -> TestTree
+after_ = After
+
+after :: String -> TestTree -> TestTree
+after s =
+  case parseExpr s of
+    Nothing -> error $ "Could not parse pattern " ++ show s
+    Just e -> after_ e
+
 -- | An algebra for folding a `TestTree`.
 --
 -- Instead of constructing fresh records, build upon `trivialFold`
