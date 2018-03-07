@@ -6,6 +6,8 @@ module Test.Tasty.Patterns
   ( TestPattern
   , parseTestPattern
   , noPattern
+  , Path
+  , exprMatches
   , testPatternMatches
   ) where
 
@@ -16,7 +18,6 @@ import Test.Tasty.Patterns.Eval
 
 import Data.Monoid
 import Data.Char
-import qualified Data.Sequence as Seq
 import Data.Typeable
 import Options.Applicative hiding (Success)
 
@@ -43,11 +44,14 @@ parseTestPattern s
       Success a -> Just . TestPattern . Just $ a
       _ -> Nothing
 
-testPatternMatches :: TestPattern -> Seq.Seq String -> Bool
+exprMatches :: Expr -> Path -> Bool
+exprMatches e fields =
+  case withFields fields $ asB =<< eval e of
+    Left msg -> error msg
+    Right b -> b
+
+testPatternMatches :: TestPattern -> Path -> Bool
 testPatternMatches pat fields =
   case pat of
     TestPattern Nothing -> True
-    TestPattern (Just e) ->
-      case withFields fields $ asB =<< eval e of
-        Left msg -> error msg
-        Right b -> b
+    TestPattern (Just e) -> exprMatches e fields
