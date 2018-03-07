@@ -199,11 +199,14 @@ type InitFinPair = (Seq.Seq Initializer, Seq.Seq Finalizer)
 --
 -- Also return a list of finalizers in the order they should run when the
 -- test suite completes.
-createTestActions :: OptionSet -> TestTree -> IO ([(IO (), TVar Status)], Seq.Seq Finalizer)
+createTestActions
+  :: OptionSet
+  -> TestTree
+  -> IO ([(Action, TVar Status)], Seq.Seq Finalizer)
 createTestActions opts0 tree = do
   let
     traversal ::
-      Traversal (WriterT ([(InitFinPair -> IO (), TVar Status)], Seq.Seq Finalizer) IO)
+      Traversal (WriterT ([(InitFinPair -> Action, TVar Status)], Seq.Seq Finalizer) IO)
     traversal =
       foldTestTree
         trivialFold
@@ -219,8 +222,11 @@ createTestActions opts0 tree = do
     runSingleTest opts _ test = Traversal $ do
       statusVar <- liftIO $ atomically $ newTVar NotStarted
       let
-        act (inits, fins) =
-          executeTest (run opts test) statusVar (lookupOption opts) inits fins
+        act (inits, fins) = Action
+          { actionRun = executeTest (run opts test) statusVar
+              (lookupOption opts) inits fins
+          , actionReady = return True
+          }
       tell ([(act, statusVar)], mempty)
     addInitAndRelease (ResourceSpec doInit doRelease) a = wrap $ do
       initVar <- atomically $ newTVar NotCreated
