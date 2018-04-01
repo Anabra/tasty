@@ -1,6 +1,4 @@
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE GADTs, ScopedTypeVariables, UndecidableInstances #-}
 -- | Extensible options. They are used for provider-specific settings,
 -- ingredient-specific settings and core settings (such as the test name pattern).
 module Test.Tasty.Options

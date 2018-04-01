@@ -15,8 +15,7 @@
 -- >    -- assertion no. 3 (would have failed, but won't be executed because
 -- >    -- the previous assertion has already failed)
 -- >    "foo" @?= "bar"
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE MonoLocalBinds #-}
+{-# LANGUAGE DeriveDataTypeable, MonoLocalBinds #-}
 module Test.Tasty.HUnit
   (
     -- * Constructing test cases

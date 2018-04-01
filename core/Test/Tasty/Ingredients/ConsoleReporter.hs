@@ -1,5 +1,5 @@
 -- vim:fdm=marker:foldtext=foldtext()
-{-# LANGUAGE BangPatterns, ImplicitParams, FlexibleContexts #-}
+{-# LANGUAGE BangPatterns, ImplicitParams, FlexibleContexts, DeriveDataTypeable #-}
 -- | Console reporter ingredient
 module Test.Tasty.Ingredients.ConsoleReporter
   ( consoleTestReporter

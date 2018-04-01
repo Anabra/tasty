@@ -1,5 +1,7 @@
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE DeriveDataTypeable, FlexibleInstances #-}
+
+--- required for HasCallStack by different versions of GHC
+{-# LANGUAGE FlexibleContexts #-}
 
 -- | This is the code copied from the original hunit package (v. 1.2.5.2).
 -- with minor modifications
